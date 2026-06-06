@@ -8,7 +8,7 @@ on:
 
 jobs:
   build-android:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     permissions:
       contents: read
 
@@ -60,7 +60,7 @@ jobs:
             --dart-define-from-file=env.json
 
       - name: Package SukiSU module
-        run: ./tools/package-root-module.sh
+        run: bash ./tools/package-root-module.sh
 
       - name: Collect artifacts
         run: |
