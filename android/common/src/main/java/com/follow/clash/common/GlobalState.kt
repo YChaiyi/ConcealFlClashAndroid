@@ -3,14 +3,12 @@ package com.follow.clash.common
 
 import android.app.Application
 import android.util.Log
-import com.google.firebase.FirebaseApp
-import com.google.firebase.crashlytics.FirebaseCrashlytics
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 
 object GlobalState : CoroutineScope by CoroutineScope(Dispatchers.Default) {
 
-    const val NOTIFICATION_CHANNEL = "FlClash"
+    const val NOTIFICATION_CHANNEL = "ConcealFlClash"
 
     const val NOTIFICATION_ID = 1
 
@@ -28,7 +26,7 @@ object GlobalState : CoroutineScope by CoroutineScope(Dispatchers.Default) {
 
 
     fun log(text: String) {
-        Log.d("[FlClash]", text)
+        Log.d("[ConcealFlClash]", text)
     }
 
     fun init(application: Application) {
@@ -36,12 +34,8 @@ object GlobalState : CoroutineScope by CoroutineScope(Dispatchers.Default) {
     }
 
     fun setCrashlytics(enable: Boolean) {
-        _application?.let {
-            FirebaseApp.initializeApp(it)
-            FirebaseCrashlytics.getInstance().isCrashlyticsCollectionEnabled = enable
-            if (enable) {
-                log("init crashlytics ${it.processName}")
-            }
+        if (enable) {
+            log("crashlytics is disabled in Conceal FlClash Android builds")
         }
     }
 }

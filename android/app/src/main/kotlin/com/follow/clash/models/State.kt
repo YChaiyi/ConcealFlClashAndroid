@@ -4,10 +4,10 @@ import com.follow.clash.service.models.VpnOptions
 import com.google.gson.annotations.SerializedName
 
 data class SharedState(
-    val startTip: String = "Starting VPN...",
-    val stopTip: String = "Stopping VPN...",
+    val startTip: String = "Starting TUN proxy...",
+    val stopTip: String = "Stopping TUN proxy...",
     val crashlytics: Boolean = true,
-    val currentProfileName: String = "FlClash",
+    val currentProfileName: String = "Conceal FlClash Android",
     val stopText: String = "Stop",
     val onlyStatisticsProxy: Boolean = false,
     val vpnOptions: VpnOptions? = null,

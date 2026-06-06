@@ -774,10 +774,10 @@ class AppLocalizations {
     );
   }
 
-  /// `A multi-platform proxy client based on ClashMeta, simple and easy to use, open-source and ad-free.`
+  /// `Conceal FlClash Android is a FlClash fork that keeps Android VpnService TUN proxying and adds a SukiSU Ultra helper module.`
   String get desc {
     return Intl.message(
-      'A multi-platform proxy client based on ClashMeta, simple and easy to use, open-source and ad-free.',
+      'Conceal FlClash Android is a FlClash fork that keeps Android VpnService TUN proxying and adds a SukiSU Ultra helper module.',
       name: 'desc',
       desc: '',
       args: [],

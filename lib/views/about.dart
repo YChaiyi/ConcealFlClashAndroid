@@ -48,9 +48,9 @@ class AboutView extends StatelessWidget {
           },
         ),
         ListItem(
-          title: const Text('Telegram'),
+          title: const Text('Upstream'),
           onTap: () {
-            globalState.openUrl('https://t.me/FlClash');
+            globalState.openUrl('https://github.com/chen08209/FlClash');
           },
           trailing: const Icon(Icons.launch),
         ),

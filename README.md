@@ -1,132 +1,65 @@
-<div>
+# Conceal FlClash Android
 
-[**简体中文**](README_zh_CN.md)
+[简体中文](README_zh_CN.md)
 
-</div>
+Conceal FlClash Android is a fork of [chen08209/FlClash](https://github.com/chen08209/FlClash) for Android TUN proxying with a SukiSU Ultra companion module.
 
-## FlClash
+- App long name: `Conceal FlClash Android`
+- Package name: `com.github.ychaiyi.conceal_flclash`
+- Module name: `Conceal FlClash TUN Helper`
+- Author: `YChaiyi`
 
-[![Downloads](https://img.shields.io/github/downloads/chen08209/FlClash/total?style=flat-square&logo=github)](https://github.com/chen08209/FlClash/releases/)[![Last Version](https://img.shields.io/github/release/chen08209/FlClash/all.svg?style=flat-square)](https://github.com/chen08209/FlClash/releases/)[![License](https://img.shields.io/github/license/chen08209/FlClash?style=flat-square)](LICENSE)
+## TUN Mode
 
-[![Channel](https://img.shields.io/badge/Telegram-Channel-blue?style=flat-square&logo=telegram)](https://t.me/FlClash)
+FlClash already includes an Android `VpnService` implementation that creates a TUN virtual network interface and starts the ClashMeta core with `Core.startTun(...)`. This fork keeps that path intact.
 
-A multi-platform proxy client based on ClashMeta, simple and easy to use, open-source and ad-free.
+The SukiSU Ultra module does not install REDIR or TPROXY rules. It only:
 
-on Desktop:
-<p style="text-align: center;">
-    <img alt="desktop" src="snapshots/desktop.gif">
-</p>
+- starts or stops the app through the app's quick Android actions;
+- grants notification permission when root is available;
+- cleans legacy `FLCLASH_*` REDIR chains from earlier test builds;
+- checks that a `tun*` interface appears after startup.
 
-on Mobile:
-<p style="text-align: center;">
-    <img alt="mobile" src="snapshots/mobile.gif">
-</p>
+Android VPN consent is still the system-controlled gate for `VpnService`. Open the app once and grant the VPN prompt; after that, the module action and boot script can start the existing TUN service.
 
-## Features
+## Install
 
-✈️ Multi-platform: Android, Windows, macOS and Linux
+1. Install the matching `Conceal FlClash Android` APK.
+2. Open the app once, import/select a working profile, enable TUN/VPN mode, and approve the Android VPN prompt.
+3. Install `conceal-flclash-tun-helper.zip` in SukiSU Ultra.
+4. Reboot, or use the SukiSU module action button to start/stop the TUN service.
 
-💻 Adaptive multiple screen sizes, Multiple color themes available
+## Android Actions
 
-💡 Based on Material You Design, [Surfboard](https://github.com/getsurfboard/surfboard)-like UI
+The helper module uses these actions:
 
-☁️ Supports data sync via WebDAV
-
-✨ Support subscription link, Dark mode
-
-## Use
-
-### Linux
-
-⚠️ Make sure to install the following dependencies before using them
-
-   ```bash
-    sudo apt-get install libayatana-appindicator3-dev
-    sudo apt-get install libkeybinder-3.0-dev
-   ```
-
-### Android
-
-Support the following actions
-
-   ```bash
-    com.follow.clash.action.START
-    
-    com.follow.clash.action.STOP
-    
-    com.follow.clash.action.TOGGLE
-   ```
-
-## Download
-
-<a href="https://chen08209.github.io/FlClash-fdroid-repo/repo?fingerprint=789D6D32668712EF7672F9E58DEEB15FBD6DCEEC5AE7A4371EA72F2AAE8A12FD"><img alt="Get it on F-Droid" src="snapshots/get-it-on-fdroid.svg" width="200px"/></a> <a href="https://github.com/chen08209/FlClash/releases"><img alt="Get it on GitHub" src="snapshots/get-it-on-github.svg" width="200px"/></a>
+```text
+com.github.ychaiyi.conceal_flclash.action.START
+com.github.ychaiyi.conceal_flclash.action.STOP
+com.github.ychaiyi.conceal_flclash.action.TOGGLE
+```
 
 ## Build
 
-1. Update submodules
-   ```bash
-   git submodule update --init --recursive
-   ```
+```bash
+git submodule update --init --recursive
+flutter pub get
+flutter build apk --release --target-platform android-arm64
+./tools/package-root-module.sh
+```
 
-2. Install `Flutter` and `Golang` environment
+Create `android/local.properties` if needed:
 
-3. Build Application
+```properties
+sdk.dir=/Users/liuhaiyi/Library/Android/sdk
+flutter.sdk=/path/to/flutter
+```
 
-    - android
+## Release Artifacts
 
-        1. Install `Android SDK`, `Android NDK`
+- APK: `build/app/outputs/flutter-apk/app-release.apk`
+- SukiSU module: `build/root-module/conceal-flclash-tun-helper.zip`
 
-        2. Set `ANDROID_NDK` environment variable
+## Upstream Credits
 
-        3. Run build script
-
-           ```bash
-           dart setup.dart android
-           ```
-
-    - windows
-
-        1. Requires a Windows client
-
-        2. Install `GCC`, `Inno Setup`
-
-        3. Run build script
-
-           ```bash
-           dart setup.dart windows
-           ```
-
-    - linux
-
-        1. Requires a Linux client
-
-        2. Dependencies are auto-installed by setup script, or manually:
-           ```bash
-           sudo apt-get install -y libayatana-appindicator3-dev libkeybinder-3.0-dev
-           ```
-
-        3. Run build script
-
-           ```bash
-           dart setup.dart linux
-           ```
-
-    - macOS
-
-        1. Requires a macOS client
-
-        2. Run build script
-
-           ```bash
-           dart setup.dart macos
-           ```
-
-## Star
-
-The easiest way to support developers is to click on the star (⭐) at the top of the page.
-
-<p style="text-align: center;">
-    <a href="https://api.star-history.com/svg?repos=chen08209/FlClash&Date">
-        <img alt="start" width=50% src="https://api.star-history.com/svg?repos=chen08209/FlClash&Date"/>
-    </a>
-</p>
+This project is based on [chen08209/FlClash](https://github.com/chen08209/FlClash), the FlClash Android `VpnService` TUN implementation, and the ClashMeta core.
