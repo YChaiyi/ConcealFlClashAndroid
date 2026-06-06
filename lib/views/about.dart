@@ -42,22 +42,30 @@ class AboutView extends StatelessWidget {
       title: appLocalizations.more,
       items: [
         ListItem(
+          title: const Text('Author'),
+          subtitle: const Text('YChaiyi'),
+          onTap: () {
+            globalState.openUrl('https://github.com/YChaiyi');
+          },
+          trailing: const Icon(Icons.launch),
+        ),
+        ListItem(
           title: Text(appLocalizations.checkUpdate),
           onTap: () {
             _checkUpdate(context);
           },
         ),
         ListItem(
-          title: const Text('Upstream'),
+          title: Text(appLocalizations.project),
           onTap: () {
-            globalState.openUrl('https://github.com/chen08209/FlClash');
+            globalState.openUrl('https://github.com/$repository');
           },
           trailing: const Icon(Icons.launch),
         ),
         ListItem(
-          title: Text(appLocalizations.project),
+          title: const Text('Upstream'),
           onTap: () {
-            globalState.openUrl('https://github.com/$repository');
+            globalState.openUrl('https://github.com/chen08209/FlClash');
           },
           trailing: const Icon(Icons.launch),
         ),
