@@ -1,5 +1,5 @@
 name: fl_clash
-description: Conceal FlClash Android is a FlClash fork for Android TUN proxying with a SukiSU Ultra helper module.
+description: Conceal FlClash Android is a FlClash fork for SukiSU Ultra root TUN transparent proxying.
 publish_to: 'none'
 version: 0.8.93+2026052901
 environment:

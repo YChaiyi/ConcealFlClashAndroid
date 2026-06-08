@@ -694,20 +694,20 @@ class AppLocalizations {
     );
   }
 
-  /// `Only allow selected app to enter VPN`
+  /// `Only allow selected apps to use the proxy`
   String get accessControlAllowDesc {
     return Intl.message(
-      'Only allow selected app to enter VPN',
+      'Only allow selected apps to use the proxy',
       name: 'accessControlAllowDesc',
       desc: '',
       args: [],
     );
   }
 
-  /// `The selected application will be excluded from VPN`
+  /// `Selected apps will be excluded from the proxy`
   String get accessControlNotAllowDesc {
     return Intl.message(
-      'The selected application will be excluded from VPN',
+      'Selected apps will be excluded from the proxy',
       name: 'accessControlNotAllowDesc',
       desc: '',
       args: [],
@@ -774,29 +774,34 @@ class AppLocalizations {
     );
   }
 
-  /// `Conceal FlClash Android is a FlClash fork that keeps Android VpnService TUN proxying and adds a SukiSU Ultra helper module.`
+  /// `Conceal FlClash Android is a FlClash fork for SukiSU Ultra root TUN transparent proxying.`
   String get desc {
     return Intl.message(
-      'Conceal FlClash Android is a FlClash fork that keeps Android VpnService TUN proxying and adds a SukiSU Ultra helper module.',
+      'Conceal FlClash Android is a FlClash fork for SukiSU Ultra root TUN transparent proxying.',
       name: 'desc',
       desc: '',
       args: [],
     );
   }
 
-  /// `Starting VPN...`
+  /// `Starting TUN proxy...`
   String get startVpn {
     return Intl.message(
-      'Starting VPN...',
+      'Starting TUN proxy...',
       name: 'startVpn',
       desc: '',
       args: [],
     );
   }
 
-  /// `Stopping VPN...`
+  /// `Stopping TUN proxy...`
   String get stopVpn {
-    return Intl.message('Stopping VPN...', name: 'stopVpn', desc: '', args: []);
+    return Intl.message(
+      'Stopping TUN proxy...',
+      name: 'stopVpn',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Compatibility mode`
@@ -969,20 +974,20 @@ class AppLocalizations {
     return Intl.message('Search', name: 'search', desc: '', args: []);
   }
 
-  /// `Allow applications to bypass VPN`
+  /// `Allow applications to bypass TUN`
   String get allowBypass {
     return Intl.message(
-      'Allow applications to bypass VPN',
+      'Allow applications to bypass TUN',
       name: 'allowBypass',
       desc: '',
       args: [],
     );
   }
 
-  /// `Some apps can bypass VPN when turned on`
+  /// `Some apps can bypass TUN when turned on`
   String get allowBypassDesc {
     return Intl.message(
-      'Some apps can bypass VPN when turned on',
+      'Some apps can bypass TUN when turned on',
       name: 'allowBypassDesc',
       desc: '',
       args: [],
@@ -1029,10 +1034,10 @@ class AppLocalizations {
     return Intl.message('General', name: 'general', desc: '', args: []);
   }
 
-  /// `Attach HTTP proxy to VpnService`
+  /// `Set system proxy`
   String get systemProxyDesc {
     return Intl.message(
-      'Attach HTTP proxy to VpnService',
+      'Set system proxy',
       name: 'systemProxyDesc',
       desc: '',
       args: [],
@@ -1499,20 +1504,20 @@ class AppLocalizations {
     return Intl.message('Add Hosts', name: 'hostsDesc', desc: '', args: []);
   }
 
-  /// `Changes take effect after restarting the VPN`
+  /// `Changes take effect after restarting the TUN proxy`
   String get vpnTip {
     return Intl.message(
-      'Changes take effect after restarting the VPN',
+      'Changes take effect after restarting the TUN proxy',
       name: 'vpnTip',
       desc: '',
       args: [],
     );
   }
 
-  /// `Auto routes all system traffic through VpnService`
+  /// `Start the SukiSU Ultra root TUN transparent proxy`
   String get vpnEnableDesc {
     return Intl.message(
-      'Auto routes all system traffic through VpnService',
+      'Start the SukiSU Ultra root TUN transparent proxy',
       name: 'vpnEnableDesc',
       desc: '',
       args: [],
@@ -3124,10 +3129,10 @@ class AppLocalizations {
     return Intl.message('Turn Off', name: 'turnOff', desc: '', args: []);
   }
 
-  /// `VPN configuration change detected`
+  /// `TUN proxy configuration change detected`
   String get vpnConfigChangeDetected {
     return Intl.message(
-      'VPN configuration change detected',
+      'TUN proxy configuration change detected',
       name: 'vpnConfigChangeDetected',
       desc: '',
       args: [],

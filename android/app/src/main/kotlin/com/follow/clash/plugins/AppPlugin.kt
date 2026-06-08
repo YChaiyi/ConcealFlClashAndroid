@@ -7,7 +7,6 @@ import android.content.Intent
 import android.content.pm.ApplicationInfo
 import android.content.pm.ComponentInfo
 import android.content.pm.PackageManager
-import android.net.VpnService
 import android.os.Build
 import android.os.PowerManager
 import android.provider.Settings
@@ -28,7 +27,6 @@ import com.follow.clash.getPackageIconPath
 import com.follow.clash.models.Package
 import com.follow.clash.showToast
 import com.google.gson.Gson
-import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
@@ -47,7 +45,6 @@ import java.util.zip.ZipFile
 class AppPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, ActivityAware {
 
     companion object {
-        const val VPN_PERMISSION_REQUEST_CODE = 1001
         const val NOTIFICATION_PERMISSION_REQUEST_CODE = 1002
     }
 
@@ -56,8 +53,6 @@ class AppPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, ActivityAware 
     private lateinit var channel: MethodChannel
 
     private lateinit var scope: CoroutineScope
-
-    private var vpnPrepareCallback: (suspend () -> Unit)? = null
 
     private var requestNotificationCallback: (() -> Unit)? = null
 
@@ -321,28 +316,6 @@ class AppPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, ActivityAware 
         requestNotificationCallback = null
     }
 
-    fun prepare(needPrepare: Boolean, callBack: (suspend () -> Unit)) {
-        vpnPrepareCallback = callBack
-        if (!needPrepare) {
-            invokeVpnPrepareCallback()
-            return
-        }
-        val intent = VpnService.prepare(GlobalState.application)
-        if (intent != null) {
-            activityRef?.get()?.startActivityForResult(intent, VPN_PERMISSION_REQUEST_CODE)
-            return
-        }
-        invokeVpnPrepareCallback()
-    }
-
-    fun invokeVpnPrepareCallback() {
-        GlobalState.launch {
-            vpnPrepareCallback?.invoke()
-            vpnPrepareCallback = null
-        }
-    }
-
-
     @Suppress("DEPRECATION")
     private fun isChinaPackage(packageName: String): Boolean {
         val packageManager = GlobalState.application.packageManager ?: return false
@@ -440,12 +413,7 @@ class AppPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, ActivityAware 
     }
 
     private fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?): Boolean {
-        if (requestCode == VPN_PERMISSION_REQUEST_CODE) {
-            if (resultCode == FlutterActivity.RESULT_OK) {
-                invokeVpnPrepareCallback()
-            }
-        }
-        return true
+        return false
     }
 
     private fun onRequestPermissionsResultListener(

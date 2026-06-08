@@ -1,6 +1,6 @@
 # Conceal FlClash Android vVERSION
 
-Android TUN-focused FlClash fork with a SukiSU Ultra helper module.
+Android root TUN-focused FlClash fork with a SukiSU Ultra helper module.
 
 ## Artifacts
 
@@ -14,11 +14,11 @@ Android TUN-focused FlClash fork with a SukiSU Ultra helper module.
 - Module name: `Conceal FlClash TUN Helper`
 - Author: `YChaiyi`
 
-The app keeps FlClash's built-in Android `VpnService` TUN path. The SukiSU Ultra helper starts/stops the app service and verifies that a `tun*` interface appears; it does not install REDIR/TPROXY rules.
+The app start path uses the SukiSU Ultra helper module to launch a root `mihomo` TUN process. It does not request Android `VpnService` consent and does not fall back to Android `VpnService` when the module is missing or fails.
 
 ## Install
 
 1. Install the APK.
-2. Open the app once, select a profile, enable TUN/VPN mode, and approve the Android VPN prompt.
+2. Open the app once and select a working profile.
 3. Install the helper ZIP in SukiSU Ultra.
-4. Reboot or use the module action button.
+4. Reboot, use the module action button, or press start in the app.

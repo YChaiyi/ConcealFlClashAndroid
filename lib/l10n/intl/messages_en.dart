@@ -74,13 +74,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "about": MessageLookupByLibrary.simpleMessage("About"),
     "accessControl": MessageLookupByLibrary.simpleMessage("AccessControl"),
     "accessControlAllowDesc": MessageLookupByLibrary.simpleMessage(
-      "Only allow selected app to enter VPN",
+      "Only allow selected apps to use the proxy",
     ),
     "accessControlDesc": MessageLookupByLibrary.simpleMessage(
       "Configure application access proxy",
     ),
     "accessControlNotAllowDesc": MessageLookupByLibrary.simpleMessage(
-      "The selected application will be excluded from VPN",
+      "Selected apps will be excluded from the proxy",
     ),
     "accessControlSettings": MessageLookupByLibrary.simpleMessage(
       "Access Control Settings",
@@ -120,10 +120,10 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "agree": MessageLookupByLibrary.simpleMessage("Agree"),
     "allowBypass": MessageLookupByLibrary.simpleMessage(
-      "Allow applications to bypass VPN",
+      "Allow applications to bypass TUN",
     ),
     "allowBypassDesc": MessageLookupByLibrary.simpleMessage(
-      "Some apps can bypass VPN when turned on",
+      "Some apps can bypass TUN when turned on",
     ),
     "allowLan": MessageLookupByLibrary.simpleMessage("AllowLan"),
     "allowLanDesc": MessageLookupByLibrary.simpleMessage(
@@ -295,7 +295,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "deleteMultipTip": m1,
     "deleteTip": m2,
     "desc": MessageLookupByLibrary.simpleMessage(
-      "Conceal FlClash Android is a FlClash fork that keeps Android VpnService TUN proxying and adds a SukiSU Ultra helper module.",
+      "Conceal FlClash Android is a FlClash fork for SukiSU Ultra root TUN transparent proxying.",
     ),
     "destination": MessageLookupByLibrary.simpleMessage("Destination"),
     "destinationGeoIP": MessageLookupByLibrary.simpleMessage(
@@ -930,13 +930,13 @@ class MessageLookup extends MessageLookupByLibrary {
       "Standard mode, override basic configuration, provide simple rule addition capability",
     ),
     "start": MessageLookupByLibrary.simpleMessage("Start"),
-    "startVpn": MessageLookupByLibrary.simpleMessage("Starting VPN..."),
+    "startVpn": MessageLookupByLibrary.simpleMessage("Starting TUN proxy..."),
     "status": MessageLookupByLibrary.simpleMessage("Status"),
     "statusDesc": MessageLookupByLibrary.simpleMessage(
       "System DNS will be used when turned off",
     ),
     "stop": MessageLookupByLibrary.simpleMessage("Stop"),
-    "stopVpn": MessageLookupByLibrary.simpleMessage("Stopping VPN..."),
+    "stopVpn": MessageLookupByLibrary.simpleMessage("Stopping TUN proxy..."),
     "style": MessageLookupByLibrary.simpleMessage("Style"),
     "subRule": MessageLookupByLibrary.simpleMessage("Sub rule"),
     "subRuleEmpty": MessageLookupByLibrary.simpleMessage("Sub rule is empty"),
@@ -949,9 +949,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "system": MessageLookupByLibrary.simpleMessage("System"),
     "systemApp": MessageLookupByLibrary.simpleMessage("System APP"),
     "systemProxy": MessageLookupByLibrary.simpleMessage("System proxy"),
-    "systemProxyDesc": MessageLookupByLibrary.simpleMessage(
-      "Attach HTTP proxy to VpnService",
-    ),
+    "systemProxyDesc": MessageLookupByLibrary.simpleMessage("Set system proxy"),
     "tab": MessageLookupByLibrary.simpleMessage("Tab"),
     "tabAnimation": MessageLookupByLibrary.simpleMessage("Tab animation"),
     "tabAnimationDesc": MessageLookupByLibrary.simpleMessage(
@@ -1010,13 +1008,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "vibrantScheme": MessageLookupByLibrary.simpleMessage("Vibrant"),
     "view": MessageLookupByLibrary.simpleMessage("View"),
     "vpnConfigChangeDetected": MessageLookupByLibrary.simpleMessage(
-      "VPN configuration change detected",
+      "TUN proxy configuration change detected",
     ),
     "vpnEnableDesc": MessageLookupByLibrary.simpleMessage(
-      "Auto routes all system traffic through VpnService",
+      "Start the SukiSU Ultra root TUN transparent proxy",
     ),
     "vpnTip": MessageLookupByLibrary.simpleMessage(
-      "Changes take effect after restarting the VPN",
+      "Changes take effect after restarting the TUN proxy",
     ),
     "webDAVConfiguration": MessageLookupByLibrary.simpleMessage(
       "WebDAV configuration",

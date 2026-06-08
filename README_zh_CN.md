@@ -2,36 +2,36 @@
 
 [English](README.md)
 
-Conceal FlClash Android 是 [chen08209/FlClash](https://github.com/chen08209/FlClash) 的 Android 分支，保留 FlClash 自带的 `VpnService` 虚拟网卡代理，并提供 SukiSU Ultra 配套模块。
+Conceal FlClash Android 是 [chen08209/FlClash](https://github.com/chen08209/FlClash) 的 Android 分支，用于配合 SukiSU Ultra 模块启动 root TUN 透明代理。
 
 - APP 长名：`Conceal FlClash Android`
 - 包名：`com.github.ychaiyi.conceal_flclash`
 - 模块名：`Conceal FlClash TUN Helper`
 - 作者：`YChaiyi`
 
-## TUN 虚拟网卡模式
+## Root TUN 模式
 
-FlClash 本身已经有 Android `VpnService` 实现，会创建 `tun*` 虚拟网卡，并调用 ClashMeta core 的 `Core.startTun(...)`。这个分支保留这条路径。
+SukiSU Ultra 配套模块会启动一个 root `mihomo` 进程，并基于 App 当前的 `config.yaml` 生成 root TUN 配置。
 
-SukiSU Ultra 模块不写入 REDIR/TPROXY 透明代理规则。模块只负责：
+模块不会调用 Android `VpnService.prepare()`，也不会写入 REDIR/TPROXY 透明代理规则。模块负责：
 
-- 通过 App quick action 启动或停止服务；
+- 通过模块操作按钮或 App 启动按钮启动/停止 root TUN 进程；
 - 在 root 环境下授予通知权限；
 - 清理早期测试版可能残留的 `FLCLASH_*` REDIR 链；
-- 启动后检查 `tun*` 网卡是否出现。
+- 启动后检查 `ConcealFlClash` TUN 网卡是否出现。
 
-Android VPN 授权仍由系统控制。第一次使用需要打开 App 并同意 VPN 授权；授权后，模块操作按钮和开机脚本可以启动现有 TUN 服务。
+Conceal Android 启动路径只使用 root 模块。如果 SukiSU Ultra 模块未安装或启动失败，App 会提示失败，不会 fallback 到 Android `VpnService`。
 
 ## 安装
 
 1. 安装匹配的 `Conceal FlClash Android` APK。
-2. 打开 App 一次，导入/选择可用配置，开启 TUN/VPN 模式，并同意 Android VPN 授权。
+2. 打开 App 一次，导入/选择可用配置。
 3. 在 SukiSU Ultra 里安装 `conceal-flclash-tun-helper.zip`。
-4. 重启，或使用 SukiSU 模块操作按钮启动/停止 TUN 服务。
+4. 重启，使用 SukiSU 模块操作按钮，或在 App 内点击启动/停止 root TUN 服务。
 
 ## Android Actions
 
-模块使用这些 action：
+配套模块也可以通过这些 App quick action 切换：
 
 ```text
 com.github.ychaiyi.conceal_flclash.action.START
@@ -62,4 +62,4 @@ flutter.sdk=/path/to/flutter
 
 ## 上游致谢
 
-本项目基于 [chen08209/FlClash](https://github.com/chen08209/FlClash)、FlClash Android `VpnService` TUN 实现，以及 ClashMeta core。
+本项目基于 [chen08209/FlClash](https://github.com/chen08209/FlClash) 和 ClashMeta core。

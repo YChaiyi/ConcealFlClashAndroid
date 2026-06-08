@@ -1,6 +1,6 @@
 id=conceal-flclash-tun-helper
 name=Conceal FlClash TUN Helper
-version=0.1.0
-versionCode=1
+version=0.1.3
+versionCode=4
 author=YChaiyi
-description=Starts Conceal FlClash Android's built-in VpnService TUN through SukiSU Ultra/Magisk module actions. No REDIR/TPROXY rules are installed.
+description=Starts Conceal FlClash Android as a SukiSU Ultra root-created TUN transparent proxy. Android VpnService, REDIR, and TPROXY are not used.

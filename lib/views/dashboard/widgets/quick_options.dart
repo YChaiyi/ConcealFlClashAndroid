@@ -181,12 +181,15 @@ class VpnButton extends StatelessWidget {
                     ],
                   ),
                 ),
-                title: 'VPN',
+                title: appLocalizations.tun,
               );
             },
           );
         },
-        info: const Info(label: 'VPN', iconData: Icons.stacked_line_chart),
+        info: Info(
+          label: appLocalizations.tun,
+          iconData: Icons.stacked_line_chart,
+        ),
         child: Container(
           padding: baseInfoEdgeInsets.copyWith(top: 4, bottom: 8, right: 8),
           child: Row(

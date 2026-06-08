@@ -66,13 +66,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "about": MessageLookupByLibrary.simpleMessage("について"),
     "accessControl": MessageLookupByLibrary.simpleMessage("アクセス制御"),
     "accessControlAllowDesc": MessageLookupByLibrary.simpleMessage(
-      "選択したアプリのみVPNを許可",
+      "Only allow selected apps to use the proxy",
     ),
     "accessControlDesc": MessageLookupByLibrary.simpleMessage(
       "アプリケーションのプロキシアクセスを設定",
     ),
     "accessControlNotAllowDesc": MessageLookupByLibrary.simpleMessage(
-      "選択したアプリをVPNから除外",
+      "Selected apps will be excluded from the proxy",
     ),
     "accessControlSettings": MessageLookupByLibrary.simpleMessage("アクセス制御設定"),
     "account": MessageLookupByLibrary.simpleMessage("アカウント"),
@@ -97,9 +97,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "advancedConfig": MessageLookupByLibrary.simpleMessage("高度な設定"),
     "advancedConfigDesc": MessageLookupByLibrary.simpleMessage("多様な設定を提供"),
     "agree": MessageLookupByLibrary.simpleMessage("同意"),
-    "allowBypass": MessageLookupByLibrary.simpleMessage("アプリがVPNをバイパスすることを許可"),
+    "allowBypass": MessageLookupByLibrary.simpleMessage(
+      "Allow applications to bypass TUN",
+    ),
     "allowBypassDesc": MessageLookupByLibrary.simpleMessage(
-      "有効化すると一部アプリがVPNをバイパス",
+      "Some apps can bypass TUN when turned on",
     ),
     "allowLan": MessageLookupByLibrary.simpleMessage("LANを許可"),
     "allowLanDesc": MessageLookupByLibrary.simpleMessage("LAN経由でのプロキシアクセスを許可"),
@@ -231,7 +233,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "deleteMultipTip": m1,
     "deleteTip": m2,
     "desc": MessageLookupByLibrary.simpleMessage(
-      "ClashMetaベースのマルチプラットフォームプロキシクライアント。シンプルで使いやすく、オープンソースで広告なし。",
+      "Conceal FlClash Android is a FlClash fork for SukiSU Ultra root TUN transparent proxying.",
     ),
     "destination": MessageLookupByLibrary.simpleMessage("宛先"),
     "destinationGeoIP": MessageLookupByLibrary.simpleMessage("宛先地理情報"),
@@ -752,11 +754,11 @@ class MessageLookup extends MessageLookupByLibrary {
       "標準モード、基本設定を上書きし、シンプルなルール追加機能を提供",
     ),
     "start": MessageLookupByLibrary.simpleMessage("開始"),
-    "startVpn": MessageLookupByLibrary.simpleMessage("VPNを開始中..."),
+    "startVpn": MessageLookupByLibrary.simpleMessage("Starting TUN proxy..."),
     "status": MessageLookupByLibrary.simpleMessage("ステータス"),
     "statusDesc": MessageLookupByLibrary.simpleMessage("無効時はシステムDNSを使用"),
     "stop": MessageLookupByLibrary.simpleMessage("停止"),
-    "stopVpn": MessageLookupByLibrary.simpleMessage("VPNを停止中..."),
+    "stopVpn": MessageLookupByLibrary.simpleMessage("Stopping TUN proxy..."),
     "style": MessageLookupByLibrary.simpleMessage("スタイル"),
     "subRule": MessageLookupByLibrary.simpleMessage("サブルール"),
     "subRuleEmpty": MessageLookupByLibrary.simpleMessage("サブルールが空です"),
@@ -767,9 +769,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "system": MessageLookupByLibrary.simpleMessage("システム"),
     "systemApp": MessageLookupByLibrary.simpleMessage("システムアプリ"),
     "systemProxy": MessageLookupByLibrary.simpleMessage("システムプロキシ"),
-    "systemProxyDesc": MessageLookupByLibrary.simpleMessage(
-      "HTTPプロキシをVpnServiceに接続",
-    ),
+    "systemProxyDesc": MessageLookupByLibrary.simpleMessage("Set system proxy"),
     "tab": MessageLookupByLibrary.simpleMessage("タブ"),
     "tabAnimation": MessageLookupByLibrary.simpleMessage("タブアニメーション"),
     "tabAnimationDesc": MessageLookupByLibrary.simpleMessage("モバイル表示でのみ有効"),
@@ -816,12 +816,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "vibrantScheme": MessageLookupByLibrary.simpleMessage("ビブラント"),
     "view": MessageLookupByLibrary.simpleMessage("表示"),
     "vpnConfigChangeDetected": MessageLookupByLibrary.simpleMessage(
-      "VPN設定の変更が検出されました",
+      "TUN proxy configuration change detected",
     ),
     "vpnEnableDesc": MessageLookupByLibrary.simpleMessage(
-      "VpnService経由で全システムトラフィックをルーティング",
+      "Start the SukiSU Ultra root TUN transparent proxy",
     ),
-    "vpnTip": MessageLookupByLibrary.simpleMessage("変更はVPN再起動後に有効"),
+    "vpnTip": MessageLookupByLibrary.simpleMessage(
+      "Changes take effect after restarting the TUN proxy",
+    ),
     "webDAVConfiguration": MessageLookupByLibrary.simpleMessage("WebDAV設定"),
     "whitelistMode": MessageLookupByLibrary.simpleMessage("ホワイトリストモード"),
     "yearsAgo": m19,

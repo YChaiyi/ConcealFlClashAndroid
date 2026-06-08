@@ -47,12 +47,26 @@ class _StartButtonState extends ConsumerState<StartButton>
   }
 
   void handleSwitchStart() {
-    isStart = !isStart;
+    final nextStart = !ref.read(isStartProvider);
+    isStart = nextStart;
     updateController();
-    debouncer.call(FunctionTag.updateStatus, () {
-      globalState.container
-          .read(setupActionProvider.notifier)
-          .updateStatus(isStart, isInit: !ref.read(initProvider));
+    debouncer.call(FunctionTag.updateStatus, () async {
+      try {
+        await globalState.container
+            .read(setupActionProvider.notifier)
+            .updateStatus(nextStart, isInit: !ref.read(initProvider));
+      } finally {
+        if (system.isAndroid) {
+          await globalState.container
+              .read(setupActionProvider.notifier)
+              .syncStartState();
+        }
+        final actualStart = globalState.container.read(isStartProvider);
+        if (actualStart != isStart) {
+          isStart = actualStart;
+          updateController();
+        }
+      }
     }, duration: commonDuration);
   }
 

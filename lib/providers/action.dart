@@ -136,18 +136,49 @@ class SetupAction extends _$SetupAction {
     ref.read(requestsProvider.notifier).value = FixedList(500);
   }
 
+  void _startUpdateTimer() {
+    _updateTimer?.cancel();
+    _updateTimer = Timer.periodic(const Duration(seconds: 1), (_) {
+      ref.read(commonActionProvider.notifier).updateRunTime();
+      ref.read(commonActionProvider.notifier).updateTraffic();
+    });
+  }
+
+  Future<void> syncStartState() async {
+    if (!system.isAndroid) return;
+    await _updateStartTime();
+    ref.read(commonActionProvider.notifier).updateRunTime();
+    if (startTime != null) {
+      _startUpdateTimer();
+    } else {
+      _updateTimer?.cancel();
+      _updateTimer = null;
+    }
+  }
+
   Future<void> _handleStart() async {
+    _updateTimer?.cancel();
+    _updateTimer = null;
     startTime ??= DateTime.now();
     //The local status must be updated when performing the run task
     ref.read(commonActionProvider.notifier).updateRunTime();
     ref.read(commonActionProvider.notifier).updateTraffic();
     if (!ref.read(suspendProvider)) {
-      await coreController.startListener();
+      final started = await coreController.startListener();
+      if (!started) {
+        await syncStartState();
+        if (startTime != null) {
+          return;
+        }
+        startTime = null;
+        ref.read(commonActionProvider.notifier).updateRunTime();
+        throw 'Conceal FlClash TUN Helper start failed';
+      }
     }
-    _updateTimer = Timer.periodic(const Duration(seconds: 1), (_) {
-      ref.read(commonActionProvider.notifier).updateRunTime();
-      ref.read(commonActionProvider.notifier).updateTraffic();
-    });
+    await syncStartState();
+    startTime ??= DateTime.now();
+    ref.read(commonActionProvider.notifier).updateRunTime();
+    _startUpdateTimer();
   }
 
   Future _updateStartTime() async {
@@ -159,6 +190,10 @@ class SetupAction extends _$SetupAction {
     _updateTimer?.cancel();
     _updateTimer = null;
     await coreController.stopListener();
+    if (system.isAndroid) {
+      await syncStartState();
+      if (startTime != null) return;
+    }
   }
 
   Future<void> initStatus() async {
@@ -168,7 +203,7 @@ class SetupAction extends _$SetupAction {
     }
     commonPrint.log('init status');
     if (system.isAndroid) {
-      await _updateStartTime();
+      await syncStartState();
     }
     final status = isStart == true
         ? true
@@ -188,6 +223,16 @@ class SetupAction extends _$SetupAction {
             .tryStartCore(true);
         if (res) return;
         if (!ref.read(initProvider)) return;
+        if (system.isAndroid) {
+          await applyProfile(
+            force: true,
+            silence: true,
+            preloadInvoke: () async {
+              await _handleStart();
+            },
+          );
+          return;
+        }
         await _handleStart();
         applyProfileDebounce(force: true, silence: true);
       } else {
@@ -266,7 +311,7 @@ class SetupAction extends _$SetupAction {
   Future<void> applyProfile({
     bool silence = false,
     bool force = false,
-    VoidCallback? preloadInvoke,
+    FutureOr<void> Function()? preloadInvoke,
   }) async {
     await _setupConfig(
       force: force,
@@ -277,6 +322,19 @@ class SetupAction extends _$SetupAction {
         await ref.read(providersProvider.notifier).syncProviders();
       },
     );
+  }
+
+  Future<void> _restartAndroidRootTunIfNeeded() async {
+    if (!system.isAndroid || !isStart) return;
+    await coreController.stopListener();
+    final started = await coreController.startListener();
+    if (!started) {
+      await syncStartState();
+      if (startTime != null) return;
+      await handleStop();
+      throw 'Conceal FlClash TUN Helper start failed';
+    }
+    await syncStartState();
   }
 
   Future<VM2<String, String>> getProfile({
@@ -348,6 +406,10 @@ class SetupAction extends _$SetupAction {
   }
 
   Future<Result<bool>> _requestAdmin(bool enableTun) async {
+    if (system.isAndroid) {
+      ref.read(realTunEnableProvider.notifier).value = enableTun;
+      return Result.success(enableTun);
+    }
     final realTunEnable = ref.read(realTunEnableProvider);
     if (enableTun != realTunEnable && realTunEnable == false) {
       final code = await system.authorizeCore();
@@ -369,7 +431,7 @@ class SetupAction extends _$SetupAction {
   Future<void> _setupConfig({
     bool force = false,
     bool silence = false,
-    VoidCallback? preloadInvoke,
+    FutureOr<void> Function()? preloadInvoke,
     FutureOr Function()? onUpdated,
   }) async {
     var profile = ref.read(currentProfileProvider);
@@ -412,6 +474,9 @@ class SetupAction extends _$SetupAction {
         }
         ref.read(checkIpNumProvider.notifier).add();
         await onUpdated?.call();
+        if (preloadInvoke == null) {
+          await _restartAndroidRootTunIfNeeded();
+        }
       },
       silence: true,
       tag: !silence ? LoadingTag.proxies : null,
@@ -513,6 +578,10 @@ class CoreAction extends _$CoreAction {
   }
 
   Future<Result<bool>> requestAdmin(bool enableTun) async {
+    if (system.isAndroid) {
+      ref.read(realTunEnableProvider.notifier).value = enableTun;
+      return Result.success(enableTun);
+    }
     final realTunEnable = ref.read(realTunEnableProvider);
     if (enableTun != realTunEnable && realTunEnable == false) {
       final code = await system.authorizeCore();
@@ -548,7 +617,12 @@ class CoreAction extends _$CoreAction {
   }
 
   Future<bool> tryStartCore([bool start = false]) async {
-    if (coreController.isCompleted) return false;
+    if (coreController.isCompleted) {
+      if (system.isAndroid) {
+        await ref.read(setupActionProvider.notifier).syncStartState();
+      }
+      return false;
+    }
     await restartCore(start);
     return true;
   }
@@ -732,6 +806,11 @@ class ProxiesAction extends _$ProxiesAction {
       String proxyName,
     ) async {
       await changeProxy(groupName: groupName, proxyName: proxyName);
+      if (system.isAndroid) {
+        await ref
+            .read(setupActionProvider.notifier)
+            .applyProfile(force: true, silence: true);
+      }
       updateGroupsDebounce();
     }, args: [groupName, proxyName]);
   }

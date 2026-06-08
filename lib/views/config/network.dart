@@ -16,7 +16,7 @@ class VPNItem extends ConsumerWidget {
       vpnSettingProvider.select((state) => state.enable),
     );
     return ListItem.switchItem(
-      title: const Text('VPN'),
+      title: Text(appLocalizations.tun),
       subtitle: Text(appLocalizations.vpnEnableDesc),
       delegate: SwitchDelegate(
         value: enable,
@@ -338,7 +338,7 @@ class NetworkListView extends StatelessWidget {
       if (system.isAndroid) const VPNItem(),
       if (system.isAndroid)
         ...generateSection(
-          title: 'VPN',
+          title: appLocalizations.tun,
           items: [
             const VpnSystemProxyItem(),
             const BypassDomainItem(),

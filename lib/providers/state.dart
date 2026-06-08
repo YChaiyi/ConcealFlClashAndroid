@@ -626,7 +626,7 @@ SharedState sharedState(Ref ref) {
     startTip: currentAppLocalizations.startVpn,
     setupParams: SetupParams(selectedMap: selectedMap, testUrl: testUrl),
     vpnOptions: VpnOptions(
-      enable: vpnSetting.enable,
+      enable: system.isAndroid ? true : vpnSetting.enable,
       stack: stack,
       systemProxy: vpnSetting.systemProxy,
       port: port,

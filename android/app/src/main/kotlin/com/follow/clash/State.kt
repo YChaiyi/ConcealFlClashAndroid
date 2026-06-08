@@ -1,9 +1,7 @@
 package com.follow.clash
 
-import android.net.VpnService
 import com.follow.clash.common.GlobalState
 import com.follow.clash.models.SharedState
-import com.follow.clash.plugins.AppPlugin
 import com.follow.clash.plugins.TilePlugin
 import com.follow.clash.service.models.NotificationParams
 import com.google.gson.Gson
@@ -30,9 +28,6 @@ object State {
 
     var flutterEngine: FlutterEngine? = null
 
-    val appPlugin: AppPlugin?
-        get() = flutterEngine?.plugin<AppPlugin>()
-
     val tilePlugin: TilePlugin?
         get() = flutterEngine?.plugin<TilePlugin>()
 
@@ -51,14 +46,17 @@ object State {
     suspend fun handleSyncState() {
         runLock.withLock {
             try {
-                Service.bind()
-                runTime = Service.getRunTime()
-                val runState = when (runTime == 0L) {
-                    true -> RunState.STOP
-                    false -> RunState.START
+                if (RootModule.isRunning()) {
+                    if (runTime == 0L) {
+                        runTime = System.currentTimeMillis()
+                    }
+                    runStateFlow.tryEmit(RunState.START)
+                    return
                 }
-                runStateFlow.tryEmit(runState)
+                runTime = 0L
+                runStateFlow.tryEmit(RunState.STOP)
             } catch (_: Exception) {
+                runTime = 0L
                 runStateFlow.tryEmit(RunState.STOP)
             }
         }
@@ -93,15 +91,12 @@ object State {
     }
 
     fun handleStartService() {
-        val appPlugin = flutterEngine?.plugin<AppPlugin>()
-        if (appPlugin != null) {
-            appPlugin.requestNotificationsPermission {
-                startService()
-            }
-            return
+        GlobalState.launch {
+            startService()
         }
-        startService()
     }
+
+    suspend fun handleStartServiceAndWait(): Boolean = startService()
 
     private fun startServiceWithPref() {
         GlobalState.launch {
@@ -140,7 +135,9 @@ object State {
             initParamsString,
             setupParamsString,
             onStarted = {
-                startService()
+                GlobalState.launch {
+                    startService()
+                }
             },
             onResult = {
                 if (it.isNotEmpty()) {
@@ -150,32 +147,36 @@ object State {
         )
     }
 
-    private fun startService() {
-        GlobalState.launch {
-            runLock.withLock {
-                if (runStateFlow.value != RunState.STOP) {
-                    return@launch
+    private suspend fun startService(): Boolean {
+        return runLock.withLock {
+            if (RootModule.isRunning()) {
+                if (runTime == 0L) {
+                    runTime = System.currentTimeMillis()
                 }
-                try {
-                    runStateFlow.tryEmit(RunState.PENDING)
-                    val options = sharedState.vpnOptions ?: return@launch
-                    appPlugin?.let {
-                        it.prepare(options.enable) {
-                            runTime = Service.startService(options, runTime)
-                            runStateFlow.tryEmit(RunState.START)
-                        }
-                    } ?: run {
-                        val intent = VpnService.prepare(GlobalState.application)
-                        if (intent != null) {
-                            return@launch
-                        }
-                        runTime = Service.startService(options, runTime)
-                        runStateFlow.tryEmit(RunState.START)
+                runStateFlow.tryEmit(RunState.START)
+                return@withLock true
+            }
+            if (runStateFlow.value != RunState.STOP) {
+                return@withLock runStateFlow.value == RunState.START
+            }
+            try {
+                runStateFlow.tryEmit(RunState.PENDING)
+                val started = RootModule.start()
+                if (started || RootModule.isRunning()) {
+                    runTime = when (runTime != 0L) {
+                        true -> runTime
+                        false -> System.currentTimeMillis()
                     }
-                } finally {
-                    if (runStateFlow.value == RunState.PENDING) {
-                        runStateFlow.tryEmit(RunState.STOP)
-                    }
+                    runStateFlow.tryEmit(RunState.START)
+                    return@withLock true
+                }
+                GlobalState.application.showToast(
+                    "Conceal FlClash TUN Helper start failed"
+                )
+                false
+            } finally {
+                if (runStateFlow.value == RunState.PENDING) {
+                    runStateFlow.tryEmit(RunState.STOP)
                 }
             }
         }
@@ -183,23 +184,36 @@ object State {
 
     fun handleStopService() {
         GlobalState.launch {
-            runLock.withLock {
-                if (runStateFlow.value != RunState.START) {
-                    return@launch
-                }
-                try {
-                    runStateFlow.tryEmit(RunState.PENDING)
-                    runTime = Service.stopService()
-                    runStateFlow.tryEmit(RunState.STOP)
-                } finally {
-                    if (runStateFlow.value == RunState.PENDING) {
-                        runStateFlow.tryEmit(RunState.START)
+            stopService()
+        }
+    }
+
+    suspend fun handleStopServiceAndWait(): Boolean = stopService()
+
+    private suspend fun stopService(): Boolean {
+        return runLock.withLock {
+            if (runStateFlow.value != RunState.START && !RootModule.isRunning()) {
+                return@withLock runStateFlow.value == RunState.STOP
+            }
+            try {
+                runStateFlow.tryEmit(RunState.PENDING)
+                RootModule.stop()
+                if (RootModule.isRunning()) {
+                    if (runTime == 0L) {
+                        runTime = System.currentTimeMillis()
                     }
+                    runStateFlow.tryEmit(RunState.START)
+                    false
+                } else {
+                    runTime = 0L
+                    runStateFlow.tryEmit(RunState.STOP)
+                    true
+                }
+            } finally {
+                if (runStateFlow.value == RunState.PENDING) {
+                    runStateFlow.tryEmit(RunState.START)
                 }
             }
         }
     }
 }
-
-
-

@@ -1,0 +1,27 @@
+diff --git a/hub/executor/executor.go b/hub/executor/executor.go
+index b10b8b41..beaee6f8 100644
+--- a/hub/executor/executor.go
++++ b/hub/executor/executor.go
+@@ -106,7 +106,9 @@ func ApplyConfig(cfg *config.Config, force bool) {
+ 	updateNTP(cfg.NTP)
+ 	updateDNS(cfg.DNS, cfg.General.IPv6)
+ 	//updateListeners(cfg.General, cfg.Listeners, force)
+-	//updateTun(cfg.General) // tun should not care "force"
++	if enableConcealRootTun() {
++		updateTun(cfg.General)
++	}
+ 	updateIPTables(cfg)
+ 	updateTunnels(cfg.Tunnels)
+ 
+@@ -213,6 +215,11 @@ func updateTun(general *config.General) {
+ 	listener.ReCreateTun(general.Tun, tunnel.Tunnel)
+ }
+ 
++func enableConcealRootTun() bool {
++	enabled, _ := strconv.ParseBool(os.Getenv("CONCEAL_FLCLASH_ROOT_TUN"))
++	return enabled
++}
++
+ func updateExperimental(c *config.Experimental) {
+ 	if c.QUICGoDisableGSO {
+ 		_ = os.Setenv("QUIC_GO_DISABLE_GSO", strconv.FormatBool(true))
