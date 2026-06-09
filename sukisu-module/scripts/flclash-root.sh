@@ -173,7 +173,10 @@ monitor_running() {
   monitor_pid=$(cat "$FLCLASH_MONITOR_PID_FILE" 2>/dev/null)
   [ -n "$monitor_pid" ] || return 1
   [ "$monitor_pid" != "$$" ] || return 1
-  kill -0 "$monitor_pid" >/dev/null 2>&1
+  kill -0 "$monitor_pid" >/dev/null 2>&1 || return 1
+  cmdline=$(tr '\0' ' ' < "/proc/$monitor_pid/cmdline" 2>/dev/null)
+  printf '%s\n' "$cmdline" | grep -q 'flclash-root.sh' || return 1
+  printf '%s\n' "$cmdline" | grep -q 'monitor' || return 1
 }
 
 wait_tun() {
@@ -342,6 +345,7 @@ boot_start() {
   mkdir -p "$FLCLASH_RUN_DIR" >/dev/null 2>&1
   echo "$$" > "$FLCLASH_MONITOR_PID_FILE"
   chmod 0600 "$FLCLASH_MONITOR_PID_FILE" >/dev/null 2>&1
+  trap 'rm -f "$FLCLASH_MONITOR_PID_FILE" >/dev/null 2>&1' EXIT INT TERM
   wait_boot
   cleanup_legacy_rules
   cleanup_tun_routes

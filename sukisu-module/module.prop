@@ -1,6 +1,6 @@
 id=conceal-flclash-tun-helper
 name=Conceal FlClash TUN Helper
-version=0.1.10
-versionCode=11
+version=0.1.11
+versionCode=12
 author=YChaiyi
 description=Starts Conceal FlClash Android as a SukiSU Ultra root-created gVisor TUN transparent proxy for Android user apps. Android VpnService, REDIR, and TPROXY are not used.
