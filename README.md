@@ -18,6 +18,9 @@ The module does not call Android `VpnService.prepare()` and does not install RED
 - starts or stops the root TUN process from module actions or the app start button;
 - grants notification permission when root is available;
 - cleans legacy `FLCLASH_*` REDIR chains from earlier test builds;
+- installs Android user routing with `include-android-user: 0` and excludes root UID `0` to avoid proxy loops;
+- keeps boot autostart pending until Android user data is unlocked and the app config becomes available;
+- uses the gVisor TUN stack by default because it reliably handles Android app TCP traffic in root-created TUN mode;
 - checks that the `ConcealFlClash` TUN interface appears after startup.
 
 The Conceal Android start path only uses the root module. If the SukiSU Ultra module is missing or fails to start, the app reports failure instead of falling back to Android `VpnService`.

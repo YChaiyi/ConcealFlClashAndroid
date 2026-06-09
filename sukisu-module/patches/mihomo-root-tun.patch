@@ -25,3 +25,48 @@ index b10b8b41..beaee6f8 100644
  func updateExperimental(c *config.Experimental) {
  	if c.QUICGoDisableGSO {
  		_ = os.Setenv("QUIC_GO_DISABLE_GSO", strconv.FormatBool(true))
+diff --git a/listener/sing_tun/server.go b/listener/sing_tun/server.go
+--- a/listener/sing_tun/server.go
++++ b/listener/sing_tun/server.go
+@@ -77,6 +77,12 @@ type ListenerHandler struct {
+ 	DisableICMPForwarding bool
+ }
+ 
++type packageManagerCallback struct{}
++
++func (packageManagerCallback) OnPackagesUpdated(packages int, sharedUsers int) {
++	log.Debugln("[TUN] Android package manager updated: %d packages, %d shared users", packages, sharedUsers)
++}
++
+ var emptyAddressSet = []*netipx.IPSet{{}}
+ 
+ func CalculateInterfaceName(name string) (tunName string) {
+@@ -409,6 +415,28 @@ func New(options LC.Tun, tunnel C.Tunnel, additions ...inbound.Addition) (l *Lis
+ 		EXP_SendMsgX:                          options.SendMsgX,
+ 	}
+ 
++	if runtime.GOOS == "android" && options.AutoRoute &&
++		(len(options.IncludeAndroidUser) > 0 || len(options.IncludePackage) > 0 || len(options.ExcludePackage) > 0) {
++		var packageManager tun.PackageManager
++		if len(options.IncludePackage) > 0 || len(options.ExcludePackage) > 0 {
++			packageManager, err = tun.NewPackageManager(tun.PackageManagerOptions{
++				Callback: packageManagerCallback{},
++				Logger:   log.SingLogger,
++			})
++			if err != nil {
++				err = E.Cause(err, "create package manager")
++				return
++			}
++			l.packageManager = packageManager
++			err = packageManager.Start()
++			if err != nil {
++				err = E.Cause(err, "start package manager")
++				return
++			}
++		}
++		tunOptions.BuildAndroidRules(packageManager, handler)
++	}
++
+ 	if options.AutoRedirect {
+ 		l.routeAddressMap = make(map[string]*netipx.IPSet)
+ 		l.routeExcludeAddressMap = make(map[string]*netipx.IPSet)

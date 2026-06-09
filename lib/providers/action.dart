@@ -17,6 +17,56 @@ import 'package:url_launcher/url_launcher.dart';
 
 part 'generated/action.g.dart';
 
+List<String>? _withSelectedProxyFirst(
+  List<String>? proxies,
+  String? selectedProxy,
+) {
+  if (proxies == null || selectedProxy == null || selectedProxy.isEmpty) {
+    return proxies;
+  }
+  final selectedIndex = proxies.indexOf(selectedProxy);
+  if (selectedIndex <= 0) {
+    return proxies;
+  }
+  final next = List<String>.from(proxies);
+  next.removeAt(selectedIndex);
+  next.insert(0, selectedProxy);
+  return next;
+}
+
+ProxyGroup _withSelectedProxyGroupFirst(
+  ProxyGroup proxyGroup,
+  Map<String, String> selectedMap,
+) {
+  return proxyGroup.copyWith(
+    proxies: _withSelectedProxyFirst(
+      proxyGroup.proxies,
+      selectedMap[proxyGroup.name],
+    ),
+  );
+}
+
+void _applySelectedMapToRawConfig(
+  Map<String, dynamic> rawConfig,
+  Map<String, String> selectedMap,
+) {
+  final proxyGroups = rawConfig['proxy-groups'];
+  if (proxyGroups is! List) return;
+  for (final proxyGroup in proxyGroups) {
+    if (proxyGroup is! Map) continue;
+    final name = proxyGroup['name'];
+    final selectedProxy = name is String ? selectedMap[name] : null;
+    final proxies = proxyGroup['proxies'];
+    if (proxies is! List || selectedProxy == null) continue;
+    final proxyNames = proxies.whereType<String>().toList();
+    if (proxyNames.length != proxies.length) continue;
+    final next = _withSelectedProxyFirst(proxyNames, selectedProxy);
+    if (next != null && next != proxies) {
+      proxyGroup['proxies'] = next;
+    }
+  }
+}
+
 @Riverpod(keepAlive: true)
 class CommonAction extends _$CommonAction {
   @override
@@ -357,12 +407,17 @@ class SetupAction extends _$SetupAction {
     final List<Rule> addedRules = [];
     final List<ProxyGroup> proxyGroups = [];
     final List<Rule> rules = [];
+    final selectedMap = ref.read(selectedMapProvider);
     if (setupState.overwriteType == OverwriteType.script) {
       scriptContent = await setupState.script?.content;
     } else if (setupState.overwriteType == OverwriteType.standard) {
       addedRules.addAll(setupState.addedRules);
     } else {
-      proxyGroups.addAll(setupState.proxyGroups);
+      proxyGroups.addAll(
+        setupState.proxyGroups.map(
+          (proxyGroup) => _withSelectedProxyGroupFirst(proxyGroup, selectedMap),
+        ),
+      );
       rules.addAll(setupState.rules);
     }
     final realPatchConfig = patchConfig.copyWith(
@@ -372,6 +427,7 @@ class SetupAction extends _$SetupAction {
     if (scriptContent?.isNotEmpty == true) {
       rawConfig = await handleEvaluate(scriptContent!, rawConfig);
     }
+    _applySelectedMapToRawConfig(rawConfig, selectedMap);
     final directory = await appPath.profilesPath;
     final res = makeRealProfileTask(
       MakeRealProfileState(
