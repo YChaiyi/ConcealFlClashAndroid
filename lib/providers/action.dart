@@ -209,10 +209,6 @@ class SetupAction extends _$SetupAction {
   Future<void> _handleStart() async {
     _updateTimer?.cancel();
     _updateTimer = null;
-    startTime ??= DateTime.now();
-    //The local status must be updated when performing the run task
-    ref.read(commonActionProvider.notifier).updateRunTime();
-    ref.read(commonActionProvider.notifier).updateTraffic();
     if (!ref.read(suspendProvider)) {
       final started = await coreController.startListener();
       if (!started) {

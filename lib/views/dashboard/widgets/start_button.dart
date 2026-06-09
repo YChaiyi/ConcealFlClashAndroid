@@ -17,6 +17,7 @@ class _StartButtonState extends ConsumerState<StartButton>
   AnimationController? _controller;
   late Animation<double> _animation;
   bool isStart = false;
+  bool isSwitching = false;
 
   @override
   void initState() {
@@ -47,9 +48,13 @@ class _StartButtonState extends ConsumerState<StartButton>
   }
 
   void handleSwitchStart() {
+    if (isSwitching) {
+      return;
+    }
     final nextStart = !ref.read(isStartProvider);
-    isStart = nextStart;
-    updateController();
+    setState(() {
+      isSwitching = true;
+    });
     debouncer.call(FunctionTag.updateStatus, () async {
       try {
         await globalState.container
@@ -65,6 +70,13 @@ class _StartButtonState extends ConsumerState<StartButton>
         if (actualStart != isStart) {
           isStart = actualStart;
           updateController();
+        }
+        if (mounted) {
+          setState(() {
+            isSwitching = false;
+          });
+        } else {
+          isSwitching = false;
         }
       }
     }, duration: commonDuration);
@@ -124,9 +136,7 @@ class _StartButtonState extends ConsumerState<StartButton>
               clipBehavior: Clip.antiAlias,
               materialTapTargetSize: MaterialTapTargetSize.padded,
               heroTag: null,
-              onPressed: () {
-                handleSwitchStart();
-              },
+              onPressed: isSwitching ? null : handleSwitchStart,
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -137,10 +147,18 @@ class _StartButtonState extends ConsumerState<StartButton>
                       right: 16 - 8 * _animation.value,
                     ),
                     alignment: Alignment.centerLeft,
-                    child: AnimatedIcon(
-                      icon: AnimatedIcons.play_pause,
-                      progress: _animation,
-                    ),
+                    child: isSwitching
+                        ? SizedBox.square(
+                            dimension: 22,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2.5,
+                              color: context.colorScheme.onPrimaryContainer,
+                            ),
+                          )
+                        : AnimatedIcon(
+                            icon: AnimatedIcons.play_pause,
+                            progress: _animation,
+                          ),
                   ),
                   SizedBox(width: textWidth * _animation.value, child: child!),
                 ],
